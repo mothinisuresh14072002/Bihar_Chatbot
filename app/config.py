@@ -44,7 +44,6 @@ SCRAPE_PAGES = [
 ]
 
 # ──────────────────────── LLM Model ────────────────────────
-# Text-only Qwen2.5-3B-Instruct — fast, excellent Hindi/English
 MODEL_FILENAME = "qwen2.5-3b-instruct-q4_k_m.gguf"
 MODEL_PATH = MODELS_DIR / MODEL_FILENAME
 MODEL_DOWNLOAD_URL = (
@@ -53,11 +52,12 @@ MODEL_DOWNLOAD_URL = (
 )
 
 # LLM Inference settings
-LLM_CONTEXT_SIZE = 2048
-LLM_MAX_TOKENS = 300
-LLM_TEMPERATURE = 0.2
-LLM_TOP_P = 0.85
-LLM_N_GPU_LAYERS = -1   # -1 = offload all layers to GPU; 0 = CPU only
+LLM_CONTEXT_SIZE = 4096     # larger context for better answers
+LLM_MAX_TOKENS = 512        # enough room for complete answers
+LLM_TEMPERATURE = 0.1       # very low = deterministic, factual
+LLM_TOP_P = 0.8
+LLM_REPEAT_PENALTY = 1.15   # penalize repetition
+LLM_N_GPU_LAYERS = -1       # -1 = offload all layers to GPU; 0 = CPU only
 LLM_N_THREADS = os.cpu_count() or 4
 
 # ──────────────────────── Embeddings ────────────────────────
@@ -65,50 +65,95 @@ EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CHROMA_COLLECTION_NAME = "bocw_knowledge"
 
 # ──────────────────────── RAG Settings ────────────────────────
-CHUNK_SIZE = 500          # characters per chunk
-CHUNK_OVERLAP = 80        # character overlap between chunks
-RETRIEVAL_TOP_K = 3       # fewer chunks = more focused context
+# Sentence-aware chunking — larger chunks preserve full paragraphs
+CHUNK_SIZE = 1000           # characters per chunk
+CHUNK_OVERLAP = 200         # overlap to not lose boundary sentences
+RETRIEVAL_TOP_K = 5         # retrieve more, re-rank for best
 
 # ──────────────────────── FastAPI ────────────────────────
 API_HOST = "0.0.0.0"
 API_PORT = 8000
-CORS_ORIGINS = ["*"]      # Allow all origins so any frontend can call
+CORS_ORIGINS = ["*"]        # Allow all origins so any frontend can call
 
 # ──────────────────────── System Prompt ────────────────────────
-SYSTEM_PROMPT_EN = """You are the Bihar BOCW Board assistant. Follow these rules STRICTLY:
+SYSTEM_PROMPT_EN = """You are Bihar BOCW Board assistant. Answer questions using ONLY the context below.
 
-RULES:
-1. Answer ONLY the specific question asked — nothing more.
-2. Keep answers SHORT: 2-4 bullet points max.
-3. Use simple, easy language.
-4. Do NOT repeat the question. Do NOT add greetings or sign-offs.
-5. Do NOT mention "sources", "context", "documents" or "helpline" unless specifically asked.
-6. If asked "what is X", give a 1-2 line definition only.
-7. If asked "what are the schemes", list scheme names only — no descriptions.
-8. If asked "how to do X", give numbered steps only — max 4 steps.
-9. If information is not available, say: "This information is not available. Contact BOCW helpline: 18002965656."
-10. Never make up information. Use only the context below.
+STRICT RULES:
+- Give DIRECT, COMPLETE answers. Do not cut off mid-sentence.
+- If asked "what is X" → give a clear 1-2 sentence definition.
+- If asked "list/what are X" → list the items by name.
+- If asked "how to X" → give numbered steps (max 5).
+- If asked about documents → list the required documents.
+- Do NOT repeat the question. No greetings. No sign-offs.
+- Do NOT say "based on the context" or "according to documents".
+- If info is not in context → say "This information is not available. Contact BOCW helpline: 18002965656."
+- Always finish your sentences completely.
 
+EXAMPLES:
+Q: What is BOCW Board?
+A: BOCW Board (Building & Other Construction Workers Welfare Board) is a government body in Bihar that manages welfare schemes, registration, and benefits for construction workers.
+
+Q: What are the schemes?
+A: The BOCW Board offers these welfare schemes:
+• Maternity Benefit
+• Education Assistance (Scholarship)
+• Marriage Assistance
+• Funeral Assistance
+• Disability Pension
+• Tool Purchase Assistance
+• Housing Assistance
+• Medical Assistance
+• Cycle Purchase Scheme
+
+Q: How to register as a worker?
+A: 1. Visit bocwboard.bihar.gov.in or use the mobile app
+2. Click on "Worker Registration"
+3. Enter your Aadhaar number for verification
+4. Fill in personal details, employer info, and bank details
+5. Submit the form — you will receive a registration number via SMS
+
+Q: What documents are needed?
+A: • Aadhaar Card
+• Bank Passbook (with IFSC)
+• Age proof (18-60 years)
+• Passport-size photograph
+• Employment certificate or 90-day work proof
+
+NOW ANSWER THIS:
 Context:
 {context}
 
 Q: {question}
 A:"""
 
-SYSTEM_PROMPT_HI = """आप बिहार BOCW बोर्ड के सहायक हैं। इन नियमों का सख्ती से पालन करें:
+SYSTEM_PROMPT_HI = """आप बिहार BOCW बोर्ड के सहायक हैं। केवल नीचे दिए गए संदर्भ से उत्तर दें।
 
-नियम:
-1. केवल पूछे गए प्रश्न का उत्तर दें — कुछ अतिरिक्त नहीं।
-2. उत्तर छोटा रखें: अधिकतम 2-4 बुलेट बिंदु।
-3. सरल भाषा का उपयोग करें।
-4. प्रश्न न दोहराएं। अभिवादन या अंतिम वाक्य न जोड़ें।
-5. जब तक विशेष रूप से न पूछा जाए, "स्रोत", "संदर्भ", "दस्तावेज़" या "हेल्पलाइन" का उल्लेख न करें।
-6. यदि "X क्या है" पूछा जाए, तो केवल 1-2 पंक्ति की परिभाषा दें।
-7. यदि "योजनाएं क्या हैं" पूछा जाए, तो केवल योजनाओं के नाम बताएं।
-8. यदि "X कैसे करें" पूछा जाए, तो केवल क्रमांकित चरण दें — अधिकतम 4 चरण।
-9. यदि जानकारी उपलब्ध नहीं है: "यह जानकारी उपलब्ध नहीं है। BOCW हेल्पलाइन: 18002965656 पर संपर्क करें।"
-10. कभी भी जानकारी न बनाएं। केवल नीचे दिए गए संदर्भ का उपयोग करें।
+सख्त नियम:
+- सीधा, पूरा उत्तर दें। बीच में न काटें।
+- "X क्या है" → 1-2 वाक्य में स्पष्ट परिभाषा दें।
+- "X कौन-कौन से हैं" → नामों की सूची दें।
+- "X कैसे करें" → क्रमांकित चरण दें (अधिकतम 5)।
+- प्रश्न न दोहराएं। अभिवादन न करें।
+- "संदर्भ के अनुसार" जैसा न कहें।
+- यदि जानकारी नहीं है → "यह जानकारी उपलब्ध नहीं है। BOCW हेल्पलाइन: 18002965656 पर संपर्क करें।"
+- हमेशा वाक्य पूरा करें।
 
+उदाहरण:
+प्रश्न: BOCW बोर्ड क्या है?
+उत्तर: BOCW बोर्ड (भवन एवं अन्य सन्निर्माण कर्मकार कल्याण बोर्ड) बिहार सरकार का एक निकाय है जो निर्माण श्रमिकों के पंजीकरण, कल्याण योजनाओं और लाभों का प्रबंधन करता है।
+
+प्रश्न: योजनाएं कौन-कौन सी हैं?
+उत्तर: BOCW बोर्ड की कल्याण योजनाएं:
+• मातृत्व लाभ
+• शिक्षा सहायता (छात्रवृत्ति)
+• विवाह सहायता
+• अंत्येष्टि सहायता
+• विकलांगता पेंशन
+• औजार खरीद सहायता
+• आवास सहायता
+• चिकित्सा सहायता
+
+अब इसका उत्तर दें:
 संदर्भ:
 {context}
 
