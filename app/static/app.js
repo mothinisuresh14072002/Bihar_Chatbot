@@ -179,8 +179,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const formatText = (text) => {
-        // Simple markdown parsing for bold and line breaks
         let formatted = escapeHTML(text);
+        
+        // Auto-link URLs starting with http://, https://, or www.
+        const urlRegex = /(https?:\/\/[^\s<]+|www\.[^\s<]+)/g;
+        formatted = formatted.replace(urlRegex, (url) => {
+            const href = url.startsWith('www.') ? `http://${url}` : url;
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer" style="color: #1a73e8; text-decoration: underline;">${url}</a>`;
+        });
+
+        // Auto-link plain domain references like bocwboard.bihar.gov.in
+        const domainRegex = /(?<!href="|">|\/)(bocwboard\.bihar\.gov\.in[^\s<]*)/g;
+        formatted = formatted.replace(domainRegex, (domain) => {
+            return `<a href="https://${domain}" target="_blank" rel="noopener noreferrer" style="color: #1a73e8; text-decoration: underline;">${domain}</a>`;
+        });
+
         formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         formatted = formatted.replace(/\n/g, '<br>');
         return formatted;
