@@ -1,0 +1,29 @@
+# Python / Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Models and Large Binaries
+models/
+*.gguf
+*.bin
+*.pt
+*.safetensors
+
+# Data & Database
+data/chroma_db/
+data/raw/
+
+# IDE / OS junk
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bihar BOCW Chatbot</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- Main Page Content Placeholder -->
+    <main class="page-content">
+        <header class="page-header">
+            <div class="header-content">
+                <img src="https://state.bihar.gov.in/biharBOCW/bocwLogo.png" alt="BOCW Logo" class="bocw-logo-placeholder" onerror="this.src='https://via.placeholder.com/80?text=Logo'">
+                <div>
+                    <h1>Building & Other Construction Workers Welfare Board</h1>
+                    <p>Government of Bihar</p>
+                </div>
+            </div>
+        </header>
+        <section class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h2>Welcome to Bihar BOCW Portal</h2>
+                <p>Empowering construction workers with welfare schemes and benefits.</p>
+                <button class="primary-btn">Register Now</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Chat Button -->
+    <button id="chat-toggle-btn" class="chat-toggle-btn pulse-animation">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <!-- Chat Widget Popup -->
+    <div id="chat-widget" class="chat-widget hidden">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="header-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="header-info">
+                    <h3>BOCW Assistant</h3>
+                    <span class="status-indicator">Online</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="lang-toggle-btn" class="lang-toggle" title="Toggle Language">EN</button>
+                <button id="chat-close-btn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div id="chat-messages" class="chat-messages">
+            <!-- Welcome Message -->
+            <div class="message bot-message message-appear">
+                <div class="message-content">
+                    <p id="welcome-text-en">Namaste! 🙏 I am your BOCW Bihar assistant. Ask me about schemes, registration, benefits, or any other information.</p>
+                    <p id="welcome-text-hi" style="display: none;">नमस्ते! 🙏 मैं आपका BOCW बिहार सहायक हूँ। मुझसे योजनाओं, पंजीकरण, लाभों या किसी अन्य जानकारी के बारे में पूछें।</p>
+                </div>
+            </div>
+
+            <!-- Quick Replies -->
+            <div class="quick-replies" id="quick-replies-container">
+                <button class="quick-reply-btn" data-en="What schemes are available?" data-hi="योजनाएं क्या हैं?">What schemes are available?</button>
+                <button class="quick-reply-btn" data-en="How to register?" data-hi="पंजीकरण कैसे करें?">How to register?</button>
+                <button class="quick-reply-btn" data-en="Documents required" data-hi="आवश्यक दस्तावेज">Documents required</button>
+                <button class="quick-reply-btn" data-en="Contact helpline" data-hi="हेल्पलाइन संपर्क">Contact helpline</button>
+            </div>
+        </div>
+
+        <!-- Typing Indicator (Hidden by default) -->
+        <div id="typing-indicator" class="typing-indicator hidden">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message here..." autocomplete="off">
+            <button id="chat-send-btn" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
