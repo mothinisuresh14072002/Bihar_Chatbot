@@ -57,7 +57,7 @@ LLM_MAX_TOKENS = 512        # enough room for complete answers
 LLM_TEMPERATURE = 0.1       # very low = deterministic, factual
 LLM_TOP_P = 0.8
 LLM_REPEAT_PENALTY = 1.15   # penalize repetition
-LLM_N_GPU_LAYERS = -1       # -1 = offload all layers to GPU; 0 = CPU only
+LLM_N_GPU_LAYERS = 0    # 0 = CPU stability on Windows
 LLM_N_THREADS = os.cpu_count() or 4
 
 # ──────────────────────── Embeddings ────────────────────────

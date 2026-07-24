@@ -88,16 +88,20 @@ async def chat_endpoint(request: Request, body: Optional[ChatRequestJSON] = None
     try:
         if "application/json" in content_type:
             data = await request.json()
-            message = data.get("message")
-            session_id = data.get("session_id")
-        elif "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
-            form_data = await request.form()
-            message = form_data.get("message")
-            session_id = form_data.get("session_id")
+            message = data.get("message") if isinstance(data, dict) else None
+            session_id = data.get("session_id") if isinstance(data, dict) else None
         else:
-            raise HTTPException(status_code=415, detail="Unsupported Media Type. Use JSON or Form data.")
+            try:
+                data = await request.json()
+                message = data.get("message")
+                session_id = data.get("session_id")
+            except Exception:
+                form_data = await request.form()
+                message = form_data.get("message")
+                session_id = form_data.get("session_id")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid request data: {str(e)}")
+        logger.warning(f"Error parsing request payload: {e}")
+        message = None
         
     if not message or not str(message).strip():
         raise HTTPException(status_code=400, detail="Message field is required and cannot be empty.")
@@ -112,7 +116,8 @@ async def chat_endpoint(request: Request, body: Optional[ChatRequestJSON] = None
         )
         
     try:
-        response = rag_engine.query(message)
+        import asyncio
+        response = await asyncio.to_thread(rag_engine.query, message)
         return response
     except FileNotFoundError as e:
         logger.error(f"Model not found: {e}")
@@ -125,7 +130,7 @@ async def chat_endpoint(request: Request, body: Optional[ChatRequestJSON] = None
         logger.error(traceback.format_exc())
         return JSONResponse(
             status_code=500,
-            content={"error": "An internal error occurred while processing your request."}
+            content={"error": f"Error: {str(e)}", "trace": traceback.format_exc()}
         )
 
 if __name__ == "__main__":
