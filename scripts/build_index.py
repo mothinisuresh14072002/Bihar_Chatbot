@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import (
     RAW_DATA_DIR, CHROMA_DB_DIR, CHROMA_COLLECTION_NAME,
-    CHUNK_SIZE, CHUNK_OVERLAP, EMBEDDING_MODEL_NAME
+    CHUNK_SIZE, CHUNK_OVERLAP, EMBEDDING_MODEL_NAME, HF_TOKEN
 )
 
 import chromadb
@@ -119,7 +119,10 @@ def main():
 
     # Load embedding model
     print("\n  📦 Loading embedding model...")
-    embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+    embedding_model = SentenceTransformer(
+        EMBEDDING_MODEL_NAME,
+        token=HF_TOKEN,
+    )
     print(f"  ✅ Model loaded: {EMBEDDING_MODEL_NAME}")
 
     # Initialize ChromaDB with cosine similarity

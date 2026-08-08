@@ -8,7 +8,7 @@ from pathlib import Path
 # Allow imports from project root
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.config import MODEL_PATH, MODEL_FILENAME, MODELS_DIR
+from app.config import MODEL_PATH, MODEL_FILENAME, MODELS_DIR, HF_TOKEN
 
 
 def download_model():
@@ -41,6 +41,7 @@ def download_model():
             filename=MODEL_FILENAME,
             local_dir=str(MODELS_DIR),
             local_dir_use_symlinks=False,
+            token=HF_TOKEN,
         )
         print(f"\n✅ Model downloaded successfully!")
         print(f"   Path: {downloaded_path}")

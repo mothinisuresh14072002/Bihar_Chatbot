@@ -54,7 +54,6 @@ echo ============================================================
 echo   Starting BOCW Chatbot Server on http://localhost:8000
 echo ============================================================
 echo.
-echo   Chat UI:  http://localhost:8000
 echo   API:      http://localhost:8000/api/chat
 echo   Health:   http://localhost:8000/api/health
 echo.

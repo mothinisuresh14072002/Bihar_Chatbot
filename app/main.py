@@ -1,8 +1,7 @@
 import logging
 from typing import Optional
-from fastapi import FastAPI, Request, Form, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
@@ -43,21 +42,6 @@ async def startup_event():
         logger.error(traceback.format_exc())
         rag_engine = None
         index_ready = False
-
-# Ensure static directory exists
-config.STATIC_DIR.mkdir(parents=True, exist_ok=True)
-index_html_path = config.STATIC_DIR / "index.html"
-if not index_html_path.exists():
-    with open(index_html_path, "w", encoding="utf-8") as f:
-        f.write("<html><body><h1>BOCW Bihar Chatbot Testing UI</h1><p>Test the API at /api/chat</p></body></html>")
-
-# Mount static files
-app.mount("/static", StaticFiles(directory=str(config.STATIC_DIR)), name="static")
-
-@app.get("/")
-async def read_index():
-    """Serve the root index.html."""
-    return FileResponse(str(config.STATIC_DIR / "index.html"))
 
 @app.get("/api/health")
 async def health_check():

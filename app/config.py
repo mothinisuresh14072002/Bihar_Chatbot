@@ -5,14 +5,27 @@ All paths, model settings, and RAG parameters in one place.
 import os
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+except ImportError:  # Keep configuration importable before dependencies are installed.
+    load_dotenv = None
+
 # ──────────────────────── Base Paths ────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Load local development secrets from .env. In production, set HF_TOKEN directly
+# in the server environment instead of committing it to this file.
+if load_dotenv:
+    load_dotenv(PROJECT_ROOT / ".env")
+
+# Hugging Face reads HF_TOKEN automatically, and it is also passed explicitly to
+# clients below so authenticated requests get the higher Hub rate limits.
+HF_TOKEN = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACEHUB_API_TOKEN")
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 CHROMA_DB_DIR = DATA_DIR / "chroma_db"
 MODELS_DIR = PROJECT_ROOT / "models"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 # Ensure directories exist
 for d in [DATA_DIR, RAW_DATA_DIR, CHROMA_DB_DIR, MODELS_DIR]:

@@ -8,7 +8,6 @@ A fully local **Retrieval-Augmented Generation (RAG)** chatbot for the **Bihar B
 - 🌐 **Bilingual** — responds in English or Hindi based on user's language
 - 🏠 **Fully local** — no cloud APIs, runs on your machine
 - 🚀 **Fast inference** — Qwen2.5-3B-Instruct (text-only, quantized)
-- 🎨 **Beautiful chat UI** — glassmorphism design with BOCW branding
 - 🔌 **API service** — FastAPI backend on port 8000, any frontend can connect
 
 ## Quick Start
@@ -45,13 +44,12 @@ python scripts/build_index.py
 python -m app.main
 ```
 
-Open **http://localhost:8000** for the chat UI.
+The backend listens on **http://localhost:8000**. Use `/api/chat` from your frontend or client.
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/` | Chat UI page |
 | `GET` | `/api/health` | Health check |
 | `POST` | `/api/chat` | Send a question |
 
@@ -96,11 +94,7 @@ Bihar_Chatbot/
 ├── app/
 │   ├── config.py          # Configuration (paths, model, RAG settings)
 │   ├── rag.py             # RAG engine (retrieve + generate)
-│   ├── main.py            # FastAPI server (port 8000)
-│   └── static/
-│       ├── index.html     # Chat popup UI
-│       ├── style.css      # BOCW-themed styles
-│       └── app.js         # Chat frontend logic
+│   └── main.py            # FastAPI server (port 8000)
 ├── scripts/
 │   ├── scrape_website.py  # Playwright website scraper
 │   ├── extract_pdfs.py    # PDF text extractor

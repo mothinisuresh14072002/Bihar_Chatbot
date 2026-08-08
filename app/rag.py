@@ -36,7 +36,10 @@ class RAGEngine:
 
         # Embedding model
         logger.info(f"Loading embedding model: {config.EMBEDDING_MODEL_NAME}")
-        self.embedding_model = SentenceTransformer(config.EMBEDDING_MODEL_NAME)
+        self.embedding_model = SentenceTransformer(
+            config.EMBEDDING_MODEL_NAME,
+            token=config.HF_TOKEN,
+        )
 
         # LLM — loaded lazily
         self.llm = None
