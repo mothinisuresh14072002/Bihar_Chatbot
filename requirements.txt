@@ -13,6 +13,10 @@ sentence-transformers>=2.2.2
 # LLM Inference (local GGUF models)
 llama-cpp-python>=0.2.56
 
+# Voice input/output
+faster-whisper>=1.1.0
+pyttsx3>=2.90
+
 # Backend API
 fastapi>=0.109.0
 uvicorn[standard]>=0.27.0

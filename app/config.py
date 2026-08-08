@@ -73,6 +73,16 @@ LLM_REPEAT_PENALTY = 1.15   # penalize repetition
 LLM_N_GPU_LAYERS = 0    # 0 = CPU stability on Windows
 LLM_N_THREADS = os.cpu_count() or 4
 
+# Voice settings. The multilingual base model balances Hindi/English accuracy,
+# download size, and CPU latency. Set WHISPER_MODEL_SIZE=small for better
+# accuracy if the server has enough RAM, or WHISPER_DEVICE=cuda when supported.
+WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "base")
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
+WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
+WHISPER_MODEL_DIR = MODELS_DIR / "whisper"
+WHISPER_CPU_THREADS = int(os.getenv("WHISPER_CPU_THREADS", str(LLM_N_THREADS)))
+TTS_RATE = int(os.getenv("TTS_RATE", "155"))
+
 # ──────────────────────── Embeddings ────────────────────────
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 CHROMA_COLLECTION_NAME = "bocw_knowledge"

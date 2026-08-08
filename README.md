@@ -52,6 +52,7 @@ The backend listens on **http://localhost:8000**. Use `/api/chat` from your fron
 |--------|----------|-------------|
 | `GET` | `/api/health` | Health check |
 | `POST` | `/api/chat` | Send a question |
+| `POST` | `/api/voice-chat` | Upload speech and receive transcript, answer, and WAV reply |
 
 ### Chat API
 
@@ -73,6 +74,24 @@ Content-Type: application/json
   "language": "en"
 }
 ```
+
+### Voice API
+
+Send an audio file as multipart form data using the field name `audio`:
+
+```bash
+curl -X POST http://localhost:8000/api/voice-chat \
+  -F "audio=@question.wav"
+```
+
+The response contains `transcript`, the normal RAG answer, and `audio_base64`. Decode
+`audio_base64` as an `audio/wav` file to play the voice reply. The first voice request
+downloads and loads the Whisper model.
+
+Whisper uses the multilingual `base` model because it supports Hindi and English while
+remaining practical for CPU inference. `pyttsx3` provides local text-to-speech using the
+server's installed voice engine; install a Hindi system voice if Hindi speech output is
+required.
 
 ## Architecture
 
