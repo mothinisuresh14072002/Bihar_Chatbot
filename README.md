@@ -18,31 +18,38 @@ start.bat
 ```
 
 ### Manual Setup
-```bash
-# 1. Create virtual environment
+
+Clone the repository, then run the commands for your operating system.
+
+**Windows (CMD):**
+
+```cmd
+git clone https://github.com/mothinisuresh14072002/Bihar_Chatbot.git
+cd Bihar_Chatbot
 python -m venv venv
-venv\Scripts\activate      # Windows
-# source venv/bin/activate  # Linux/Mac
-
-# 2. Install dependencies
+venv\Scripts\activate.bat
 pip install -r requirements.txt
-
-# 3. Download the LLM model (~2 GB)
 python scripts/download_model.py
-
-# 4. Extract PDF data
 python scripts/extract_pdfs.py
-
-# 5. (Optional) Scrape website — requires Playwright
-playwright install chromium
-python scripts/scrape_website.py
-
-# 6. Build the search index
 python scripts/build_index.py
-
-# 7. Start the server
 python -m app.main
 ```
+
+**Linux / macOS (terminal):**
+
+```bash
+git clone https://github.com/mothinisuresh14072002/Bihar_Chatbot.git
+cd Bihar_Chatbot
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python scripts/download_model.py
+python scripts/extract_pdfs.py
+python scripts/build_index.py
+python -m app.main
+```
+
+To refresh website content as an optional extra, run `playwright install chromium` followed by `python scripts/scrape_website.py` **before** rebuilding the index. The model download, embeddings and index can consume disk space and may take time on CPU-only hardware.
 
 The backend listens on **http://localhost:8000**. Use `/api/chat` from your frontend or client.
 
